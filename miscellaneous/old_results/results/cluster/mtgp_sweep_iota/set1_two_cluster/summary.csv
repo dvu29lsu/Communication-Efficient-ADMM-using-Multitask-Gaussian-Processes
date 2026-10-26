@@ -1,0 +1,8 @@
+setting,set,n_iter,n_comm,objective,time,converged
+iota_0.9_alpha_0.9800_Q_5_rank_1_train_300_lr_0.03,set1_two_cluster,40,70,4.632171183868459,639.729572057724,True
+iota_1_alpha_0.9800_Q_5_rank_1_train_300_lr_0.03,set1_two_cluster,32,66,4.63285196813928,359.444349527359,True
+iota_1.1_alpha_0.9800_Q_5_rank_1_train_300_lr_0.03,set1_two_cluster,31,66,4.63307743684006,200.96009254455566,True
+iota_1.2_alpha_0.9800_Q_5_rank_1_train_300_lr_0.03,set1_two_cluster,33,65,4.632137965031113,207.25414538383484,True
+iota_1.3_alpha_0.9800_Q_5_rank_1_train_300_lr_0.03,set1_two_cluster,33,63,4.633016428284421,146.71139764785767,True
+iota_1.4_alpha_0.9800_Q_5_rank_1_train_300_lr_0.03,set1_two_cluster,41,62,4.6358257762503925,315.7755935192108,True
+iota_1.5_alpha_0.9800_Q_5_rank_1_train_300_lr_0.03,set1_two_cluster,34,58,4.634184257883291,257.3986840248108,True

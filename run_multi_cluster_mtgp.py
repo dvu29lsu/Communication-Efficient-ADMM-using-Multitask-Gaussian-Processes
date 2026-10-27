@@ -8,7 +8,7 @@ import csv
 
 from utils.config import ADMMConfig
 from utils.coordinator import Coordinator
-from agents_loader.agent_load import load_data_from_jsonl
+from agents_loader.agent_load import load_data_from_json, load_direction_matrix
 from utils.json_processing import process_output_to_jsonl
 from utils.set_seed import set_seed
 
@@ -17,16 +17,14 @@ from admm.local_models import QuadraticLocalModel, Poly4LocalModel
 
 from admm.moreau_oracle import build_local_models
 
-set_seed(100)
-torch.set_default_dtype(torch.float32)
+set_seed(123)
+# torch.set_default_dtype(torch.float32)
 
-# jsonl output data path
-# jsonl_output_path = os.path.join("results", "cluster_specific_mtgp", "increase_stop_latent_3_c1_mtgp_admm_results_summary.jsonl")
+# try the float64
+torch.set_default_dtype(torch.float64)
 
-# # config for the ADMM
-# cfg = ADMMConfig(zeta=1.0, rho=10, max_iters=150, eps_abs=1e-4, eps_rel=1e-3, burn_in=5)
 
-# run mtgp admm cluster
+# count exact queries per cluster from the per-iteration communication masks
 def compute_comm_per_cluster(comm_mask_per_iter, labels):
     labels = np.asarray(labels, dtype=int).reshape(-1)
     cluster_ids = sorted(np.unique(labels).tolist())
@@ -50,7 +48,7 @@ def compute_comm_per_cluster(comm_mask_per_iter, labels):
     return out
 
 def run_mtgp_clustered(
-    jsonl_path: str,
+    json_path: str,
     admm_cfg: ADMMConfig,
     burn_in: int,
     iota: float = 1.0,
@@ -63,15 +61,12 @@ def run_mtgp_clustered(
     specific_task_noise: bool = False,
     local_model: str = "quadratic",
     lambda4: float = 0.05,
-    direct_matrix=None,
-    solver_method: str = "trust-constr",
-    solver_tol: float = 1e-4,
-    solver_maxiter: int = 300
+    direct_matrix=None
 ):
-    gamma_list, theta_list, labels = load_data_from_jsonl(jsonl_path)
-    labels = np.asarray(labels[0], dtype=int).reshape(-1)
+    # labels (N,) give the known cluster of each agent -> one MTGP per cluster
+    gamma_list, theta_list, labels = load_data_from_json(json_path)
 
-    set_name = os.path.basename(jsonl_path)
+    set_name = os.path.basename(json_path)
     N = len(gamma_list)
 
     # build the function form that need for compute the obj in the main Sharing ADMM loop
@@ -95,15 +90,13 @@ def run_mtgp_clustered(
         num_latents=Q,
         rank=rank,
         device="cpu",
-        dtype=torch.float32,
+        # dtype=torch.float32,
+        dtype=torch.float64,
         adapt_latents_to_cluster=adapt_latents_to_cluster,
         noise_specific_task=specific_task_noise,
         local_model=local_model,
         lambda4=lambda4,
-        direct_matrix=direct_matrix,
-        solver_method=solver_method,
-        solver_tol=solver_tol,
-        solver_maxiter=solver_maxiter
+        direct_matrix=direct_matrix
     )
 
     start = time.time()
@@ -138,15 +131,16 @@ def run_mtgp_clustered(
     return out
 
 def main():
-    # data_path = "./sand_box/set1_three_cluster.jsonl"
-    # data_path = "./sand_box/set1_two_cluster.jsonl"
-    data_path = "./sand_box/set1_one_cluster.jsonl"
+    # example dataset from data_generation/ (cluster-wise MTGP needs more than one cluster)
+    # data_path = "data_generation/overlapping_3_clusters.json"
+    data_path = "data_generation/separated_2_clusters.json"
 
-    # jsonl_output_dir = os.path.join("results", "compare_poly4_cluster")
+    dataset_name = os.path.splitext(os.path.basename(data_path))[0]
 
-    jsonl_output_dir = os.path.join("results", "compare_directional_poly4_cluster")
-
-    os.makedirs(jsonl_output_dir, exist_ok=True)
+    # test outputs go to test/ so they never overwrite saved results
+    output_dir = "test"
+    os.makedirs(output_dir, exist_ok=True)
+    jsonl_output_path = os.path.join(output_dir, f"test_cluster_mtgp_{dataset_name}.jsonl")
 
     mtgp_iota = 1.0 # 1 clust: 1.0, 2 clust: 1.2, 3 clust: 1.0
     mtgp_alpha = 0.96
@@ -156,21 +150,40 @@ def main():
     mtgp_rank = 1
     burn_in = 5
     specific_task_noise = False
-    adapt_latents_to_cluster = False ## when one cluster: False, when multiple cluster: True -> taking ceil: num agent / 2 
+    adapt_latents_to_cluster = True ## when one cluster: False, when multiple cluster: True -> taking ceil: num agent / 2
 
-    solver_method = "trust-constr"
-    solver_tol = 1e-4
-    solver_maxiter = 300
+    admm_cfg = ADMMConfig(zeta=1.0, rho=10, max_iters=150, eps_abs=1e-6, eps_rel=1e-3, burn_in=5)
 
-    admm_cfg = ADMMConfig(zeta=1.0, rho=10, max_iters=61, eps_abs=1e-6, eps_rel=1e-3, burn_in=5)
+## Setting 1: Quadratic or coordinate Poly 4
+    # # local function form for the prox computation in MTGP provider
+    local_model = "quadratic" # "quadratic" or "poly4"
+    lambda4 = 0.5
 
-## Setting 1: Poly 4
-    # # local function form and solver options for the prox computation in MTGP provider
-    # local_model = "poly4" # "quadratic" or "poly4"
+    out = run_mtgp_clustered(
+        json_path = data_path,
+        admm_cfg = admm_cfg,
+        burn_in = burn_in,
+        iota = mtgp_iota,
+        alpha = mtgp_alpha,
+        train_iter = mtgp_train_iter,
+        lr = mtgp_lr,
+        Q = mtgp_Q,
+        rank = mtgp_rank,
+        adapt_latents_to_cluster = adapt_latents_to_cluster,
+        specific_task_noise=specific_task_noise,
+        local_model=local_model,
+        lambda4=lambda4
+    )
+
+## Setting 2: Directional Poly 4
+    # local_model = "dir_poly4"
     # lambda4 = 0.5
 
+    # # fixed orthogonal 5x5 directions, shared by all agents and methods (generate_direction_matrix.py)
+    # A = load_direction_matrix("data_generation/directional_quartic_dim5.json")
+
     # out = run_mtgp_clustered(
-    #     jsonl_path = data_path,
+    #     json_path = data_path,
     #     admm_cfg = admm_cfg,
     #     burn_in = burn_in,
     #     iota = mtgp_iota,
@@ -183,47 +196,9 @@ def main():
     #     specific_task_noise=specific_task_noise,
     #     local_model=local_model,
     #     lambda4=lambda4,
-    #     solver_method=solver_method,
-    #     solver_tol=solver_tol,
-    #     solver_maxiter=solver_maxiter   
+    #     direct_matrix=A
     # )
 
-## Setting 2: Directional Poly 4
-    local_model = "dir_poly4"
-    lambda4 = 0.5
-    A = np.array([
-        [1/np.sqrt(2), 1/np.sqrt(2), 1.5, 0.5, 0.3],
-        [0.5, 1.0, 1/np.sqrt(3), 1/np.sqrt(3), 0.5],
-        [1/np.sqrt(3), 0, 1/np.sqrt(2), 0.5, 1.0],
-    ], dtype=float)
-
-    out = run_mtgp_clustered(
-        jsonl_path = data_path,
-        admm_cfg = admm_cfg,
-        burn_in = burn_in,
-        iota = mtgp_iota,
-        alpha = mtgp_alpha,
-        train_iter = mtgp_train_iter,
-        lr = mtgp_lr,
-        Q = mtgp_Q,
-        rank = mtgp_rank,
-        adapt_latents_to_cluster = adapt_latents_to_cluster,
-        specific_task_noise=specific_task_noise,
-        local_model=local_model,
-        lambda4=lambda4,
-        direct_matrix=A,
-        solver_method=solver_method,
-        solver_tol=solver_tol,
-        solver_maxiter=solver_maxiter   
-    )
-
-    output_name = f"mtgp_clustered_specific_{mtgp_iota}_{mtgp_alpha}_{os.path.splitext(os.path.basename(data_path))[0]}.jsonl"
-
-    # jsonl_output_path = os.path.join("results", "compare_poly4_cluster", output_name)
-
-    jsonl_output_path = os.path.join("results", "compare_directional_poly4_cluster", output_name)
-
-    
     process_output_to_jsonl(out, jsonl_output_path)
 
     print("Finish:", os.path.basename(data_path))

@@ -8,31 +8,29 @@ import csv
 
 from utils.config import ADMMConfig
 from utils.coordinator import Coordinator
-from agents_loader.agent_load import load_data_from_mat, load_data_from_jsonl
+from agents_loader.agent_load import load_data_from_json
 from utils.json_processing import process_output_to_jsonl
 from utils.set_seed import set_seed
 
 # import the load method
 from query_method.mogp.mtgp_provider import MTGPMoreauGradProvider
 
-set_seed(100)
-torch.set_default_dtype(torch.float32)
+set_seed(123)
+# torch.set_default_dtype(torch.float32)
 
-jsonl_output_dir = os.path.join("results", "cluster")
-os.makedirs(jsonl_output_dir, exist_ok=True)
-
-# jsonl output data path
-jsonl_output_path = os.path.join("results", "cluster", "test_mtgp_admm_results_summary.jsonl")
+# try the float64: same GP precision as the cluster-wise MTGP and SOGP runners
+torch.set_default_dtype(torch.float64)
 
 # config for the ADMM
-cfg = ADMMConfig(zeta=1.0, rho=10, max_iters=150, eps_abs=1e-4, eps_rel=1e-3, burn_in=5)
+cfg = ADMMConfig(zeta=1.0, rho=10, max_iters=150, eps_abs=1e-6, eps_rel=1e-3, burn_in=5)
 
 # run mtgp admm
 
-def run_mtgp(jsonl_path: str, burn_in: int, iota: float = 1.3, alpha: float = 0.96, train_iter: int = 300, lr: float = 0.03, Q: int = 5, rank: int =1):
-    set_name = "C1 - Cluster"
-    gamma_list, theta_list, labels = load_data_from_jsonl(jsonl_path)
-    # finishig loading the data for the function
+def run_mtgp(json_path: str, burn_in: int, iota: float = 1.3, alpha: float = 0.96, train_iter: int = 300, lr: float = 0.03, Q: int = 5, rank: int =1):
+    set_name = os.path.basename(json_path) # dataset name for the printed summary
+
+    # global MTGP shares one model across all agents, so the cluster labels are not used
+    gamma_list, theta_list, _ = load_data_from_json(json_path)
 
     N = len(gamma_list) # num agents
 
@@ -45,7 +43,9 @@ def run_mtgp(jsonl_path: str, burn_in: int, iota: float = 1.3, alpha: float = 0.
     ## run MTGP with 1.3 iota and 0.98 ==== less burn in  with 3 points too see => Not converge
     mtgp = MTGPMoreauGradProvider(gamma_list, theta_list, rho=cfg.rho, zeta=cfg.zeta, 
                                 min_points=burn_in, iota=iota, alpha=alpha, train_iter=train_iter, lr=lr, 
-                                num_tasks=N, num_latents=Q, rank=rank, device="cpu")
+                                num_tasks=N, num_latents=Q, rank=rank, device="cpu",
+                                # dtype=torch.float32)
+                                dtype=torch.float64)
 
     start = time.time()
 
@@ -83,7 +83,14 @@ def run_mtgp(jsonl_path: str, burn_in: int, iota: float = 1.3, alpha: float = 0.
 
 def main():
 
-    data_path = "./sand_box/set1_one_cluster.jsonl"
+    # example dataset from data_generation/
+    data_path = "data_generation/homogeneous.json"
+    dataset_name = os.path.splitext(os.path.basename(data_path))[0]
+
+    # test outputs go to test/ so they never overwrite saved results
+    output_dir = "test"
+    os.makedirs(output_dir, exist_ok=True)
+    jsonl_output_path = os.path.join(output_dir, f"test_mtgp_{dataset_name}.jsonl")
 
     # mtgp setting:
 

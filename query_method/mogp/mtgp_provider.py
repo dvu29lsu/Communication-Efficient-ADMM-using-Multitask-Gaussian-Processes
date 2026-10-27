@@ -50,12 +50,9 @@ class MTGPMoreauGradProvider:
         # noise options
         specific_task_noise: bool = False,
         
-        # local function options - using scipy minimizer here
-        local_model: str = "quadratic", # "quadratic" or "poly4"
+        # local function options (the exact prox solver is fixed inside MoreauOracle)
+        local_model: str = "quadratic", # "quadratic", "poly4" or "dir_poly4"
         lambda4: float = 0.05,
-        solver_method="trust-constr",
-        solver_tol=1e-6,
-        solver_maxiter=500,
         direct_matrix=None
     ):
         self.gamma_list = gamma_list
@@ -88,9 +85,6 @@ class MTGPMoreauGradProvider:
         #local form
         self.local_model = local_model # function form
         self.lambda4 = lambda4 # regularization for poly4
-        self.solver_method = solver_method
-        self.solver_tol = solver_tol
-        self.solver_maxiter = solver_maxiter
         self.direct_matrix = direct_matrix
         
         # local solver
@@ -100,9 +94,6 @@ class MTGPMoreauGradProvider:
                         rho=self.rho,
                         local_model=self.local_model,
                         lambda4=self.lambda4,
-                        solver_method=self.solver_method,
-                        solver_tol=self.solver_tol,
-                        solver_maxiter=self.solver_maxiter,
                         A=self.direct_matrix
                     )
 
@@ -168,8 +159,12 @@ class MTGPMoreauGradProvider:
             if len(Zi) == 0:
                 continue
             
-            Z_tensor = torch.as_tensor(np.stack(Zi, axis=0), dtype=torch.float32) # (ni,p)
-            Y_tensor = torch.as_tensor(np.stack(Yi, axis=0), dtype=torch.float32) # (ni,p+1)
+            # Z_tensor = torch.as_tensor(np.stack(Zi, axis=0), dtype=torch.float32) # (ni,p)
+            # Y_tensor = torch.as_tensor(np.stack(Yi, axis=0), dtype=torch.float32) # (ni,p+1)
+
+            # float64 test: float32 here rounds nearby points even when the GP runs in float64
+            Z_tensor = torch.as_tensor(np.stack(Zi, axis=0), dtype=torch.float64) # (ni,p)
+            Y_tensor = torch.as_tensor(np.stack(Yi, axis=0), dtype=torch.float64) # (ni,p+1)
 
             Z_list.append(Z_tensor)
             Y_list.append(Y_tensor)
@@ -221,14 +216,14 @@ class MTGPMoreauGradProvider:
                     num_tasks=self.N,
                     num_outputs_per_input=self.p+1,
                     task_feature_index=self.p, # the last feature in the input is the task id
-                ).to(self.device)
+                ).to(self.device, self.dtype)
                 
             else:
                 # same task noise for all task in mtgp model
                 # likelihood = gpytorch.likelihoods.GaussianLikelihood(noise_constraint=gpytorch.constraints.GreaterThan(1e-3),
                 #                                                      noise_prior=gpytorch.priors.SmoothedBoxPrior(0.15, 1.5, sigma=0.001)).to(self.device)
 
-                likelihood = gpytorch.likelihoods.GaussianLikelihood(noise_constraint=gpytorch.constraints.GreaterThan(1e-3)).to(self.device)
+                likelihood = gpytorch.likelihoods.GaussianLikelihood(noise_constraint=gpytorch.constraints.GreaterThan(1e-3)).to(self.device, self.dtype)
 
             # ===== Experiment Feb 4, 26 =====
             
@@ -244,7 +239,7 @@ class MTGPMoreauGradProvider:
                 input_dim=self.p,
                 num_latents=self.num_latents,
                 rank=self.rank
-            ).to(self.device)
+            ).to(self.device, self.dtype) # model parameters in the same dtype as the data
 
             self.models = model
             self.likelihoods = likelihood
@@ -376,12 +371,14 @@ class MTGPMoreauGradProvider:
         g_mean, g_var = self._predict_grad(i, z_i)
 
 
-        # ========== March, 19, 26 ============================
-        # compute the grad error with exact grad value for analysis (error from ML prediction without projection)
+        # hidden exact gradient, used ONLY to log the prediction error (diagnostic)
+        # it must not affect the query decision, the GP data, or the ADMM update
         _, g_true = self.exact_moreau_value_and_grad(i, z_i)
+
+        # grad error BEFORE projection: raw GP prediction quality, so SOGP and MTGP
+        # are compared on the model alone (same definition as the SOGP provider)
         grad_err = float(np.linalg.norm(g_true - g_mean))
-        print(f"MTGP - Grad error BEFORE projection for agent {i+1} at iter {k+1}: {grad_err:.4f}")
-        # ====================================================================
+        print(f"MTGP - Grad error before projection for agent {i+1} at iter {k+1}: {grad_err:.4f}")
 
         # ========== Projection to the ellipsoid constraint (Jan, 28 - Long Vu) ===================
         A, B, c = compute_constrain_sets(z_i, self.Z[i], self.Y[i], gamma=1.0/(self.rho), max_num_ellipsoids=5)
@@ -434,14 +431,6 @@ class MTGPMoreauGradProvider:
             # query so grad error also zero 
             grad_err = 0.0
             return g, True, stats, grad_err
-        
-        ## Comment here in March, 19 for test grad error between grad after projection with exact grad value
-        # ====================================================================
-        # compute grad error with exact grad value
-        # _, g_true = self.exact_moreau_value_and_grad(i, z_i)
-        grad_err = float(np.linalg.norm(g_true - g_mean))
-        print(f"MTGP - Grad error AFTER projection for agent {i+1} at iter {k+1}: {grad_err:.4f}")
-        # ====================================================================
 
-        # if the prediction from the mtgp is used
+        # prediction is used: no communication, return the projected MTGP gradient
         return g_mean, False, stats, grad_err

@@ -5,7 +5,7 @@ import csv
 
 from utils.config import ADMMConfig
 from utils.coordinator import Coordinator
-from agents_loader.agent_load import load_data_from_jsonl
+from agents_loader.agent_load import load_data_from_json, load_direction_matrix
 from admm.exact_quadsolver import solving_moreau_exact_update
 from utils.json_processing import process_output_to_jsonl
 
@@ -13,18 +13,13 @@ from admm.moreau_oracle import build_moreau_oracles
 from admm.local_models import QuadraticLocalModel, Poly4LocalModel
 from admm.moreau_oracle import build_local_models
 
-cfg = ADMMConfig(zeta=1.0, rho=10, max_iters=500, eps_abs=1e-4, eps_rel=1e-3)
+cfg = ADMMConfig(zeta=1.0, rho=10, max_iters=150, eps_abs=1e-6, eps_rel=1e-3)
 
-jsonl_output_dir = os.path.join("results", "directional_poly4_cluster")
-os.makedirs(jsonl_output_dir, exist_ok=True)
+def run_vanilla(json_path, local_model="quadratic", lambda4=0.05, direct_matrix=None):
+    set_name = os.path.basename(json_path) # dataset name for the printed summary
 
-# select the jsonl file for the cluster function
-jsonl_output_path = os.path.join("results", "directional_poly4_cluster", "directional_poly4_c3_vanilla_admm_results_summary.jsonl")
-
-def run_vanilla(jsonl_path, local_model="quadratic", lambda4=0.05, direct_matrix=None, solver_method="trust-constr", solver_tol=1e-6, solver_maxiter=500):
-    set_name = "C3 - Cluster"
-
-    gamma_list, theta_list, _ = load_data_from_jsonl(jsonl_path)
+    # vanilla ADMM does not use the cluster labels
+    gamma_list, theta_list, _ = load_data_from_json(json_path)
     N = len(gamma_list)
 
     # define the local model // fomr of the function
@@ -46,9 +41,6 @@ def run_vanilla(jsonl_path, local_model="quadratic", lambda4=0.05, direct_matrix
     local_model=local_model,
     lambda4=lambda4,
     A=direct_matrix,
-    solver_method=solver_method,
-    solver_tol=solver_tol,
-    solver_maxiter=solver_maxiter,
     )
 
     # Always communicate
@@ -73,7 +65,7 @@ def run_vanilla(jsonl_path, local_model="quadratic", lambda4=0.05, direct_matrix
     out = coord.run(moreau_provider, verbose=True, log_every=3)
 
     elapsed = time.time() - start
-    print("\n=== VANILLA-ADMM ===")
+    print("\n----------------------- VANILLA-ADMM -----------------------")
     print("Set:", set_name)
     print("Running time:", elapsed)
 
@@ -94,31 +86,30 @@ def run_vanilla(jsonl_path, local_model="quadratic", lambda4=0.05, direct_matrix
 
 
 def main():
-    # set the path using the cluster function
-    # data_path = "sand_box/set1_three_cluster.jsonl"
-    data_path = "sand_box/set1_one_cluster.jsonl"
+    # example dataset from data_generation/
+    # data_path = "data_generation/overlapping_3_clusters.json"
+    data_path = "data_generation/separated_2_clusters.json"
+    dataset_name = os.path.splitext(os.path.basename(data_path))[0]
 
-    solver_method = "trust-constr"
-    solver_tol = 1e-4
-    solver_maxiter = 300
+    # test outputs go to test/ so they never overwrite saved results
+    output_dir = "test"
+    os.makedirs(output_dir, exist_ok=True)
+    jsonl_output_path = os.path.join(output_dir, f"test_vanilla_{dataset_name}.jsonl")
 
-## Setting 1: Poly 4
+## Setting 1: Quadratic or coordinate Poly 4
     local_model = "quadratic" # "quadratic" or "poly4"
     lambda4 = 0.5 # affect of the 4th order term in local function with poly-4th order
-    out = run_vanilla(data_path, local_model=local_model, lambda4=lambda4, solver_method=solver_method, solver_tol=solver_tol, solver_maxiter=solver_maxiter)
+    out = run_vanilla(data_path, local_model=local_model, lambda4=lambda4)
 
 
 ## Setting 2: Directional Poly 4
     # local_model = "dir_poly4"
     # lambda4 = 0.5
 
-    # A = np.array([
-    #     [1/np.sqrt(2), 1/np.sqrt(2), 1.5, 0.5, 0.3],
-    #     [0.5, 1.0, 1/np.sqrt(3), 1/np.sqrt(3), 0.5],
-    #     [1/np.sqrt(3), 0, 1/np.sqrt(2), 0.5, 1.0],
-    # ], dtype=float)
+    # fixed orthogonal 5x5 directions, shared by all agents and methods (generate_direction_matrix.py)
+    # A = load_direction_matrix("data_generation/directional_quartic_dim5.json")
 
-    # out = run_vanilla(data_path, local_model=local_model, lambda4=lambda4, direct_matrix=A, solver_method=solver_method, solver_tol=solver_tol, solver_maxiter=solver_maxiter)
+    # out = run_vanilla(data_path, local_model=local_model, lambda4=lambda4, direct_matrix=A)
 
     process_output_to_jsonl(out, jsonl_output_path)
     print("Finish:", os.path.basename(data_path))

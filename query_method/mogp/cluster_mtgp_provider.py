@@ -35,11 +35,7 @@ class ClusterMTGPProvider:
         noise_specific_task: bool = False,
         local_model: str = "quadratic", # "quadratic" or "poly4"
         lambda4: float = 0.05,
-        direct_matrix=None,
-        solver_method="trust-constr",
-        solver_tol=1e-6,
-        solver_maxiter=500
-        
+        direct_matrix=None
     ):
         self.gamma_list = gamma_list
         self.theta_list = theta_list
@@ -67,9 +63,6 @@ class ClusterMTGPProvider:
 
         self.local_model = local_model
         self.lambda4 = float(lambda4)
-        self.solver_method = solver_method
-        self.solver_tol = solver_tol
-        self.solver_maxiter = solver_maxiter
         self.direct_matrix = direct_matrix
 
         # cluster indexing
@@ -136,9 +129,6 @@ class ClusterMTGPProvider:
                 specific_task_noise=self.noise_specific_task,
                 local_model=self.local_model,
                 lambda4=self.lambda4,
-                solver_method=self.solver_method,
-                solver_tol=self.solver_tol,
-                solver_maxiter=self.solver_maxiter,
                 direct_matrix=self.direct_matrix
             )
 

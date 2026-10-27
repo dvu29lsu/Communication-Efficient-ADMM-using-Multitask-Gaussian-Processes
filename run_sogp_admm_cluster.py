@@ -7,7 +7,7 @@ import torch
 from utils.config import ADMMConfig
 from utils.coordinator import Coordinator
 from utils.json_processing import process_output_to_jsonl
-from agents_loader.agent_load import load_data_from_mat, load_data_from_jsonl
+from agents_loader.agent_load import load_data_from_json, load_direction_matrix
 from query_method.sogp.sogp_provider import SOGPMoreauProvider
 from utils.set_seed import set_seed
 
@@ -15,22 +15,20 @@ from admm.moreau_oracle import build_local_models
 
 set_seed(123)
 
-torch.set_default_dtype(torch.float) ##float32
+# torch.set_default_dtype(torch.float) ##float32
 
-# create output dir
-# jsonl_output_dir = os.path.join("results", "test_run")
-# os.makedirs(jsonl_output_dir, exist_ok=True)
-
-# OUTPUT PATH
-jsonl_output_path = os.path.join("results", "test_run_sogp_cluster.jsonl")
+# try the float64: float32 rounds the small predictive variances used by the query rule
+torch.set_default_dtype(torch.float64)
 
 # ADMM config
-cfg = ADMMConfig(zeta=1.0, rho=10, max_iters=200, eps_abs=1e-4, eps_rel=1e-3)
+cfg = ADMMConfig(zeta=1.0, rho=10, max_iters=150, eps_abs=1e-6, eps_rel=1e-3)
 
 # modleing the GP with SOGP
-def run_sogp(jsonl_path: str, burn_in: int, iota: float = 0.5, alpha: float = 0.8, train_iter: int = 100, lr: float = 0.01, local_model: str = "quadratic", lambda4: float = 0.5, solver_method: str = "trust-constr", solver_tol: float = 1e-4, solver_maxiter: int = 300, direct_matrix=None):
-    set_name = "C3 - Cluster"
-    gamma_list, theta_list, _ = load_data_from_jsonl(jsonl_path)
+def run_sogp(json_path: str, burn_in: int, iota: float = 0.5, alpha: float = 0.8, train_iter: int = 100, lr: float = 0.01, local_model: str = "quadratic", lambda4: float = 0.5, direct_matrix=None):
+    set_name = os.path.basename(json_path) # dataset name for the printed summary
+
+    # SOGP keeps one GP per agent, so the cluster labels are not used
+    gamma_list, theta_list, _ = load_data_from_json(json_path)
     N = len(gamma_list)
 
     # build the local models
@@ -50,12 +48,11 @@ def run_sogp(jsonl_path: str, burn_in: int, iota: float = 0.5, alpha: float = 0.
         train_iters=train_iter,
         lr=lr,
         device="cpu",
+        # dtype=torch.float32,
+        dtype=torch.float64,
         eval_exact_error=False,
         local_model=local_model,
         lambda4=lambda4,
-        solver_method=solver_method,
-        solver_tol=solver_tol,
-        solver_maxiter=solver_maxiter,
         direct_matrix=direct_matrix
     )
 
@@ -98,44 +95,44 @@ def run_sogp(jsonl_path: str, burn_in: int, iota: float = 0.5, alpha: float = 0.
     return out
 
 def main():
-    data_path = "sand_box/set1_one_cluster.jsonl"
+    # example dataset from data_generation/
+    # data_path = "data_generation/overlapping_3_clusters.json"
+    data_path = "data_generation/separated_2_clusters.json"
+    dataset_name = os.path.splitext(os.path.basename(data_path))[0]
+
+    # test outputs go to test/ so they never overwrite saved results
+    output_dir = "test"
+    os.makedirs(output_dir, exist_ok=True)
+    jsonl_output_path = os.path.join(output_dir, f"test_sogp_{dataset_name}.jsonl")
 
     # sogp setting
-    gp_iota = 0.5
-    gp_alpha = 0.8
+    gp_iota = 0.8
+    gp_alpha = 0.96
     gp_train_iter = 100
     gp_lr = 0.01
 
     #training points
     burn_in = 5
-    
-    # proximal solver setting - using scipy
-    solver_method = "trust-constr"
-    solver_tol = 1e-4
-    solver_maxiter = 300
 
     # different function
 
-    #=========== Poly 4 setting ============
+    #=========== Quadratic or coordinate Poly 4 setting ============
 
-    # local_model = "poly4"
+    local_model = "poly4"
     local_model = "quadratic"
 
     lambda4 = 0.5
 
-    out = run_sogp(data_path, burn_in=burn_in, iota=gp_iota, alpha=gp_alpha, train_iter=gp_train_iter, lr=gp_lr, local_model=local_model, lambda4=lambda4, solver_method=solver_method, solver_tol=solver_tol, solver_maxiter=solver_maxiter)
+    out = run_sogp(data_path, burn_in=burn_in, iota=gp_iota, alpha=gp_alpha, train_iter=gp_train_iter, lr=gp_lr, local_model=local_model, lambda4=lambda4)
 
     #=========== Directional Poly 4 setting ============
     # local_model = "dir_poly4"
     # lambda4 = 0.5
-    
-    # A = np.array([
-    #     [1/np.sqrt(2), 1/np.sqrt(2), 1.5, 0.5, 0.3],
-    #     [0.5, 1.0, 1/np.sqrt(3), 1/np.sqrt(3), 0.5],
-    #     [1/np.sqrt(3), 0, 1/np.sqrt(2), 0.5, 1.0],
-    # ], dtype=float)
 
-    # out = run_sogp(data_path, burn_in=burn_in, iota=gp_iota, alpha=gp_alpha, train_iter=gp_train_iter, lr=gp_lr, local_model=local_model, lambda4=lambda4, solver_method=solver_method, solver_tol=solver_tol, solver_maxiter=solver_maxiter, direct_matrix=A)
+    # # # fixed orthogonal 5x5 directions, shared by all agents and methods (generate_direction_matrix.py)
+    # A = load_direction_matrix("data_generation/directional_quartic_dim5.json")
+
+    # out = run_sogp(data_path, burn_in=burn_in, iota=gp_iota, alpha=gp_alpha, train_iter=gp_train_iter, lr=gp_lr, local_model=local_model, lambda4=lambda4, direct_matrix=A)
 
     # proceed data to jsonl
     process_output_to_jsonl(out, jsonl_output_path)

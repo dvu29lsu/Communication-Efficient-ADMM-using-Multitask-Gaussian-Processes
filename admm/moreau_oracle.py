@@ -1,23 +1,18 @@
 import numpy as np
-from scipy.optimize import minimize
+from scipy.optimize import root
 
 from admm.exact_quadsolver import solving_moreau_exact_update
 from admm.local_models import QuadraticLocalModel, Poly4LocalModel, DirectionalPoly4LocalModel
 
+# fixed settings of the quartic prox solver, shared by every method (same as the ICC paper runs)
+QUARTIC_ROOT_XTOL = 1e-10        # step tolerance of scipy root (hybr)
+QUARTIC_ROOT_MAXFEV = 300        # max function evaluations of scipy root (hybr)
+QUARTIC_STATIONARITY_TOL = 1e-8  # accept a prox point only if ||grad f(x) + rho (x - z)||_inf <= this
+
 class MoreauOracle:
-    def __init__(
-        self,
-        model,
-        rho,
-        solver_method="trust-exact",
-        solver_tol=1e-6,
-        solver_maxiter=300,
-    ):
+    def __init__(self, model, rho):
         self.model = model
         self.rho = float(rho)
-        self.solver_method = solver_method
-        self.solver_tol = solver_tol
-        self.solver_maxiter = int(solver_maxiter)
 
     def prox(self, z):
         z = np.asarray(z, dtype=float).reshape(-1)
@@ -31,32 +26,42 @@ class MoreauOracle:
             y = z - (1.0 / self.rho) * g
             return y
 
-        # otherwise, use scipy minimize to solve the prox problem
-        def obj(x):
-            return self.model.value(x) + 0.5 * self.rho * np.dot(x - z, x - z)
+        # quartic models have no closed form -> solve numerically
+        if isinstance(self.model, (Poly4LocalModel, DirectionalPoly4LocalModel)):
+            return self._prox_quartic(z)
 
-        def jac(x):
+        raise TypeError(f"Unsupported local model: {type(self.model).__name__}")
+
+    def _prox_quartic(self, z):
+        # prox(z) = argmin_x f(x) + rho/2 ||x - z||^2 is strongly convex and smooth,
+        # so its unique minimizer is the root of the stationarity equation
+        #   F(x) = grad f(x) + rho (x - z) = 0,   with Jacobian  hess f(x) + rho I  (SPD)
+        def stationarity(x):
             return self.model.grad(x) + self.rho * (x - z)
 
-        def hess(x):
+        def stationarity_jac(x):
             return self.model.hess(x) + self.rho * np.eye(len(x))
 
-        res = minimize(
-            obj,
-            x0=z.copy(),
-            jac=jac,
-            hess=hess,
-            method=self.solver_method,
-            tol=self.solver_tol,
-            options={"maxiter": self.solver_maxiter},
+        res = root(
+            stationarity,
+            x0=z.copy(), # z is close to the prox point for large rho
+            jac=stationarity_jac,
+            method="hybr",
+            options={"xtol": QUARTIC_ROOT_XTOL, "maxfev": QUARTIC_ROOT_MAXFEV},
         )
 
-        print("Prox solve success with scipy")
+        # accept the point only if it really satisfies the stationarity equation,
+        # so the "exact" oracle is exact for every method (not just res.success)
+        x = np.asarray(res.x, dtype=float)
+        residual = float(np.linalg.norm(stationarity(x), ord=np.inf))
 
-        if not res.success:
-            raise RuntimeError(f"prox solve failed: {res.message}")
+        if not np.all(np.isfinite(x)) or not np.isfinite(residual) or residual > QUARTIC_STATIONARITY_TOL:
+            raise RuntimeError(
+                f"quartic prox solve failed: residual={residual:.3e} "
+                f"(limit {QUARTIC_STATIONARITY_TOL:.0e}), message={res.message}"
+            )
 
-        return np.asarray(res.x, dtype=float)
+        return x
 
     def moreau_value_and_grad(self, z):
         z = np.asarray(z, dtype=float).reshape(-1)
@@ -102,9 +107,6 @@ def build_moreau_oracles(
     local_model="quadratic",
     lambda4=0.5,
     A=None, ## direction matrix
-    solver_method="trust-exact",
-    solver_tol=1e-4,
-    solver_maxiter=300,
 ):
     print("constructing Moreau oracles with local_model =", local_model)
 
@@ -116,13 +118,4 @@ def build_moreau_oracles(
         A=A,
     )
 
-    return [
-        MoreauOracle(
-            model=m,
-            rho=rho,
-            solver_method=solver_method,
-            solver_tol=solver_tol,
-            solver_maxiter=solver_maxiter,
-        )
-        for m in models
-    ]
+    return [MoreauOracle(model=m, rho=rho) for m in models]

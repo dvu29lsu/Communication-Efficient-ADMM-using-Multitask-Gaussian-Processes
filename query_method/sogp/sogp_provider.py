@@ -57,12 +57,9 @@ class SOGPMoreauProvider:
         # refit frequency after exact queries in GP mode
         retrain_every: int = 1,  # 1 = refit immediately each time agent queried
 
-        # function
-        local_model: str = "quadratic",
+        # local function options (the exact prox solver is fixed inside MoreauOracle)
+        local_model: str = "quadratic", # "quadratic", "poly4" or "dir_poly4"
         lambda4: float = 0.5,
-        solver_method: str = "trust-constr",
-        solver_tol: float = 1e-4,
-        solver_maxiter: int = 300,
         direct_matrix: np.ndarray = None
     ):
         self.gamma_list = gamma_list
@@ -107,9 +104,6 @@ class SOGPMoreauProvider:
         # local form
         self.local_model = local_model # function form
         self.lambda4 = lambda4 # regularization for poly4
-        self.solver_method = solver_method
-        self.solver_tol = solver_tol
-        self.solver_maxiter = solver_maxiter
         self.direct_matrix = direct_matrix
 
         # local function for each agents -> provide the exact solution
@@ -119,9 +113,6 @@ class SOGPMoreauProvider:
                 rho=self.rho,
                 local_model=self.local_model,
                 lambda4=self.lambda4,
-                solver_method=self.solver_method,
-                solver_tol=self.solver_tol,
-                solver_maxiter=self.solver_maxiter,
                 A=self.direct_matrix
             )
 
@@ -161,8 +152,8 @@ class SOGPMoreauProvider:
         if self.models[i] is None:
             # Multitask likelihood already include the noise -> no need adding noise
             # DEFAULT: Task Noise as well as Global Noise)
-            likelihood = gpytorch.likelihoods.MultitaskGaussianLikelihood(num_tasks=self.p + 1).to(self.device) ## using the RBFKernelsGrads -> as MTGP they sharing the same input for grad, value
-            
+            likelihood = gpytorch.likelihoods.MultitaskGaussianLikelihood(num_tasks=self.p + 1).to(self.device, self.dtype) ## using the RBFKernelsGrads -> as MTGP they sharing the same input for grad, value
+
             # ================ changing task noise (each task -> only global noise, not specific noise varriance for the Moreau and grad)
             # (Feb 9, 26) ==========================
             # likelihood = gpytorch.likelihoods.MultitaskGaussianLikelihood(num_tasks=(self.p + 1), has_task_noise=False).to(self.device) ## using the RBFKernelsGrads -> as MTGP they sharing the same input for grad, value
@@ -182,7 +173,7 @@ class SOGPMoreauProvider:
 
             # ============================================
             
-            model = GPModelWithDerivatives(train_x, train_y, likelihood, p=self.p).to(self.device)
+            model = GPModelWithDerivatives(train_x, train_y, likelihood, p=self.p).to(self.device, self.dtype) # model parameters in the same dtype as the data
 
             self.models[i] = model
             
@@ -264,12 +255,14 @@ class SOGPMoreauProvider:
         print(f"Predicting with SOGP for agent {i+1} at iter {k+1}")
         g_mean, g_var = self._predict_grad(i, z_i)
 
-    # ========== March, 19, 26 ============================
-        # compute the grad error with exact grad value for analysis (error from ML prediction without projection)
+        # hidden exact gradient, used ONLY to log the prediction error (diagnostic)
+        # it must not affect the query decision, the GP data, or the ADMM update
         _, g_true = self.exact_moreau_value_and_grad(i, z_i)
+
+        # grad error BEFORE projection: raw GP prediction quality, so SOGP and MTGP
+        # are compared on the model alone (same definition as the MTGP provider)
         grad_err = float(np.linalg.norm(g_true - g_mean))
         print(f"GP - Grad error before projection for agent {i+1} at iter {k+1}: {grad_err:.4f}")
-    # ====================================================================
 
     # ========== Projection onto the ellipsoids (Jan, 28, 26) =========================
         
@@ -331,10 +324,5 @@ class SOGPMoreauProvider:
             grad_err = 0.0 # since here we do query adn we need return 0 here
             return g, True, stats, grad_err
 
-    ### March, 19: Test grad error between grad after projection with exact grad value
-
-        # if consider grad error with the exact moreau of this agent at this point
-        # grad_err = None
-        # _, g_true = self.exact_moreau_value_and_grad(i, z_i)
-        # grad_err = float(np.linalg.norm(g_true - g_mean))
+        # prediction is used: no communication, return the projected GP gradient
         return g_mean, False, stats, grad_err

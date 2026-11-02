@@ -25,7 +25,8 @@ class ClusterMTGPProvider:
         min_points: int = 5,
         iota: float = 1.0,
         alpha: float = 0.96,
-        train_iter: int = 300,
+        train_iter: int = 300, # Adam steps for the first fit of each cluster MTGP
+        refit_iter: int = 100, # Adam steps for each later refit
         lr: float = 0.03,
         num_latents: int = 5,
         rank: int = 1,
@@ -49,6 +50,7 @@ class ClusterMTGPProvider:
 
         # mtgp model
         self.train_iter = int(train_iter)
+        self.refit_iter = int(refit_iter)
         self.lr = float(lr)
         self.num_latents = int(num_latents)
         self.rank = int(rank)
@@ -121,6 +123,7 @@ class ClusterMTGPProvider:
                 iota=self.iota,
                 alpha=self.alpha,
                 train_iter=self.train_iter,
+                refit_iter=self.refit_iter,
                 lr=self.lr,
                 num_latents=q_cluster,
                 rank=self.rank,

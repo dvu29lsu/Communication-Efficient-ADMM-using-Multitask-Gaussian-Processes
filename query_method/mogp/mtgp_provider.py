@@ -37,7 +37,8 @@ class MTGPMoreauGradProvider:
         alpha: float = 0.98, # decay
         
         # mtgp training
-        train_iter: int = 200,
+        train_iter: int = 200, # Adam steps for the first fit
+        refit_iter: int = 100, # Adam steps for each later refit (warm-started from the previous fit)
         lr: float = 0.01,
         num_tasks: int = 10, # num_agent
         num_latents: int = 10, # num_latent process using
@@ -66,6 +67,7 @@ class MTGPMoreauGradProvider:
         # for mtgp model
         self.min_points = int(min_points)
         self.train_iters = int(train_iter)
+        self.refit_iters = int(refit_iter)
         self.lr = float(lr)
 
         self.num_tasks = num_tasks
@@ -243,21 +245,25 @@ class MTGPMoreauGradProvider:
 
             self.models = model
             self.likelihoods = likelihood
+
+            # first fit: train from scratch with the full budget
+            iters = self.train_iters
         else:
             model = self.models
             likelihood = self.likelihoods
 
-            # set new train iteration for update since using the previous model as initialization 
+            # set new train iteration for update since using the previous model as initialization
             # -> just do few steps of training for update
 
-            self.train_iters = 100
+            # self.train_iters = 100 # old: overwrote the first-fit budget, so refits were fixed at 100
+            iters = self.refit_iters
 
             # update training data in-place with last comm
             model.set_train_data(inputs=Z_aug, targets=Y_aug, strict=False)
 
 
         # train or update model with new data
-        train_mtgp_exact(model, likelihood, Z_aug, Y_aug, lr=self.lr, iters=self.train_iters, verbose=False, specific_task_noise=self.specific_task_noise)
+        train_mtgp_exact(model, likelihood, Z_aug, Y_aug, lr=self.lr, iters=iters, verbose=False, specific_task_noise=self.specific_task_noise)
         # =================================================================================================
  
 
@@ -289,6 +295,9 @@ class MTGPMoreauGradProvider:
 
         # get the predictive distribution
         with gpytorch.settings.max_cholesky_size(10000), gpytorch.settings.max_root_decomposition_size(10000), gpytorch.settings.fast_pred_var(False):
+        # Test the fast pred vs the float 64
+        # with gpytorch.settings.max_cholesky_size(10000), gpytorch.settings.max_root_decomposition_size(10000), gpytorch.settings.fast_pred_var(True):
+
             # pred_dist = likelihood(model(z_aug)) # nosise predictive distribution (y*)
             
             # noise free model using the latent prediction (f*|data) // custom :D

@@ -87,14 +87,14 @@ def run_vanilla(json_path, local_model="quadratic", lambda4=0.05, direct_matrix=
 
 def main():
     # example dataset from data_generation/
-    # data_path = "data_generation/overlapping_3_clusters.json"
-    data_path = "data_generation/separated_2_clusters.json"
+    data_path = "data_generation/overlapping_2_clusters.json"
+    # data_path = "data_generation/separated_2_clusters.json"
     dataset_name = os.path.splitext(os.path.basename(data_path))[0]
 
     # test outputs go to test/ so they never overwrite saved results
     output_dir = "test"
     os.makedirs(output_dir, exist_ok=True)
-    jsonl_output_path = os.path.join(output_dir, f"test_vanilla_{dataset_name}.jsonl")
+    jsonl_output_path = os.path.join(output_dir, f"test_vanilla_over_3_{dataset_name}.jsonl")
 
 ## Setting 1: Quadratic or coordinate Poly 4
     local_model = "quadratic" # "quadratic" or "poly4"

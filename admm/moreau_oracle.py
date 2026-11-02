@@ -82,17 +82,17 @@ def build_local_models(
 
     for G, th in zip(gamma_list, theta_list):
         if local_model == "quadratic":
-            print("Building QuadraticLocalModel")
+            # print("Building QuadraticLocalModel")
             models.append(QuadraticLocalModel(G, th))
 
         elif local_model == "poly4":
-            print("Building Poly4LocalModel with lambda4 =", lambda4)
+            # print("Building Poly4LocalModel with lambda4 =", lambda4)
             models.append(Poly4LocalModel(G, th, lambda4))
 
         elif local_model == "dir_poly4":
             if A is None:
                 raise ValueError("A must be provided for local_model='dir_poly4'")
-            print("Building DirectionalPoly4LocalModel with lambda4 =", lambda4)
+            # print("Building DirectionalPoly4LocalModel with lambda4 =", lambda4)
             models.append(DirectionalPoly4LocalModel(G, th, lambda4, A))
 
         else:
@@ -108,7 +108,7 @@ def build_moreau_oracles(
     lambda4=0.5,
     A=None, ## direction matrix
 ):
-    print("constructing Moreau oracles with local_model =", local_model)
+    print("constructing Moreau oracles with local_model: ", local_model)
 
     models = build_local_models(
         gamma_list=gamma_list,

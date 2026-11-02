@@ -1,8 +1,19 @@
-import numpy as np
 import os
+
+# CPU budget for this run: torch's default (all 24 cores) is ~20x slower here
+# for our small GP matrices; keep (runs in parallel) x N_THREADS <= 24.
+# The env vars must be set before numpy/torch are imported (BLAS reads them once at load).
+N_THREADS = 8
+os.environ["OMP_NUM_THREADS"] = str(N_THREADS)
+os.environ["MKL_NUM_THREADS"] = str(N_THREADS)
+os.environ["OPENBLAS_NUM_THREADS"] = str(N_THREADS)
+
+import numpy as np
 import time
 import csv
 import torch
+
+torch.set_num_threads(N_THREADS)
 
 from utils.config import ADMMConfig
 from utils.coordinator import Coordinator
@@ -18,10 +29,12 @@ set_seed(123)
 # torch.set_default_dtype(torch.float) ##float32
 
 # try the float64: float32 rounds the small predictive variances used by the query rule
+# torch.set_default_dtype(torch.float32)
 torch.set_default_dtype(torch.float64)
 
+
 # ADMM config
-cfg = ADMMConfig(zeta=1.0, rho=10, max_iters=150, eps_abs=1e-6, eps_rel=1e-3)
+cfg = ADMMConfig(zeta=1.0, rho=10, max_iters=200, eps_abs=1e-6, eps_rel=1e-3)
 
 # modleing the GP with SOGP
 def run_sogp(json_path: str, burn_in: int, iota: float = 0.5, alpha: float = 0.8, train_iter: int = 100, lr: float = 0.01, local_model: str = "quadratic", lambda4: float = 0.5, direct_matrix=None):
@@ -96,18 +109,20 @@ def run_sogp(json_path: str, burn_in: int, iota: float = 0.5, alpha: float = 0.8
 
 def main():
     # example dataset from data_generation/
-    # data_path = "data_generation/overlapping_3_clusters.json"
-    data_path = "data_generation/separated_2_clusters.json"
+    data_path = "data_generation/overlapping_2_clusters.json"
+    # data_path = "data_generation/separated_2_clusters.json"
+
+    # data_path = "data_generation/homogeneous.json"
     dataset_name = os.path.splitext(os.path.basename(data_path))[0]
 
     # test outputs go to test/ so they never overwrite saved results
     output_dir = "test"
     os.makedirs(output_dir, exist_ok=True)
-    jsonl_output_path = os.path.join(output_dir, f"test_sogp_{dataset_name}.jsonl")
+    jsonl_output_path = os.path.join(output_dir, f"test_sogp_over_3_{dataset_name}.jsonl")
 
     # sogp setting
-    gp_iota = 0.8
-    gp_alpha = 0.96
+    gp_iota = 0.7
+    gp_alpha = 0.9
     gp_train_iter = 100
     gp_lr = 0.01
 
@@ -118,7 +133,7 @@ def main():
 
     #=========== Quadratic or coordinate Poly 4 setting ============
 
-    local_model = "poly4"
+    # local_model = "poly4"
     local_model = "quadratic"
 
     lambda4 = 0.5

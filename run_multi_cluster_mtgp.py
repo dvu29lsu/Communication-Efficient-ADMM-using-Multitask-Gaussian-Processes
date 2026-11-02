@@ -1,10 +1,21 @@
+import os
+
+# CPU budget for this run: torch's default (all 24 cores) is ~20x slower here
+# for our small GP matrices; keep (runs in parallel) x N_THREADS <= 24.
+# The env vars must be set before numpy/torch are imported (BLAS reads them once at load).
+N_THREADS = 8
+os.environ["OMP_NUM_THREADS"] = str(N_THREADS)
+os.environ["MKL_NUM_THREADS"] = str(N_THREADS)
+os.environ["OPENBLAS_NUM_THREADS"] = str(N_THREADS)
+
 import numpy as np
 import torch
 import gpytorch
-import os
 import time
 import json
 import csv
+
+torch.set_num_threads(N_THREADS)
 
 from utils.config import ADMMConfig
 from utils.coordinator import Coordinator
@@ -54,6 +65,7 @@ def run_mtgp_clustered(
     iota: float = 1.0,
     alpha: float = 0.96,
     train_iter: int = 300,
+    refit_iter: int = 100,
     lr: float = 0.03,
     Q: int = 5,
     rank: int = 1,
@@ -86,6 +98,7 @@ def run_mtgp_clustered(
         iota=iota,
         alpha=alpha,
         train_iter=train_iter,
+        refit_iter=refit_iter,
         lr=lr,
         num_latents=Q,
         rank=rank,
@@ -132,8 +145,10 @@ def run_mtgp_clustered(
 
 def main():
     # example dataset from data_generation/ (cluster-wise MTGP needs more than one cluster)
-    # data_path = "data_generation/overlapping_3_clusters.json"
-    data_path = "data_generation/separated_2_clusters.json"
+    data_path = "data_generation/overlapping_2_clusters.json"
+    # data_path = "data_generation/separated_2_clusters.json"
+    # data_path = "data_generation/homogeneous.json"
+
 
     dataset_name = os.path.splitext(os.path.basename(data_path))[0]
 
@@ -142,9 +157,10 @@ def main():
     os.makedirs(output_dir, exist_ok=True)
     jsonl_output_path = os.path.join(output_dir, f"test_cluster_mtgp_{dataset_name}.jsonl")
 
-    mtgp_iota = 1.0 # 1 clust: 1.0, 2 clust: 1.2, 3 clust: 1.0
-    mtgp_alpha = 0.96
-    mtgp_train_iter = 300
+    mtgp_iota = 0.5
+    mtgp_alpha = 0.8
+    mtgp_train_iter = 300 # first fit iters
+    mtgp_refit_iter = 100 # refit
     mtgp_lr = 0.03
     mtgp_Q = 3
     mtgp_rank = 1
@@ -152,7 +168,7 @@ def main():
     specific_task_noise = False
     adapt_latents_to_cluster = True ## when one cluster: False, when multiple cluster: True -> taking ceil: num agent / 2
 
-    admm_cfg = ADMMConfig(zeta=1.0, rho=10, max_iters=150, eps_abs=1e-6, eps_rel=1e-3, burn_in=5)
+    admm_cfg = ADMMConfig(zeta=1.0, rho=10, max_iters = 200, eps_abs=1e-6, eps_rel=1e-3, burn_in=5)
 
 ## Setting 1: Quadratic or coordinate Poly 4
     # # local function form for the prox computation in MTGP provider
@@ -166,6 +182,7 @@ def main():
         iota = mtgp_iota,
         alpha = mtgp_alpha,
         train_iter = mtgp_train_iter,
+        refit_iter = mtgp_refit_iter,
         lr = mtgp_lr,
         Q = mtgp_Q,
         rank = mtgp_rank,
@@ -189,6 +206,7 @@ def main():
     #     iota = mtgp_iota,
     #     alpha = mtgp_alpha,
     #     train_iter = mtgp_train_iter,
+    #     refit_iter = mtgp_refit_iter,
     #     lr = mtgp_lr,
     #     Q = mtgp_Q,
     #     rank = mtgp_rank,

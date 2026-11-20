@@ -17,7 +17,9 @@ sys.path.insert(0, ROOT)
 
 # cores per run (each MTGP run is heavy); keep N_WORKERS x N_THREADS below the free cores.
 # Must be set before numpy/torch are imported (BLAS reads them once at load).
-N_THREADS = 6
+
+N_THREADS = 8
+
 os.environ["OMP_NUM_THREADS"] = str(N_THREADS)
 os.environ["MKL_NUM_THREADS"] = str(N_THREADS)
 os.environ["OPENBLAS_NUM_THREADS"] = str(N_THREADS)
@@ -54,16 +56,7 @@ DATASETS = [
     "overlapping_3_clusters",
 ]
 
-
-# just for smoke test
-# DATASETS = [
-#     "overlapping_2_clusters",
-# ]
-# IOTAS = [1.0]
-# ALPHAS = [0.96]
-
-
-# grid search: iota = [0.5, 0.6, ..., 1.5] and alpha = [0.80, 0.81, ..., 0.99]
+# grid search set
 IOTAS = [round(0.5 + 0.1 * i, 2) for i in range(11)]
 ALPHAS = [round(0.80 + 0.01 * i, 2) for i in range(20)]
 
@@ -74,7 +67,7 @@ BURN_IN = 5
 TRAIN_ITER = 250 
 REFIT_ITER = 50
 LR = 0.03
-RANK = 1  # rank of each task (IndexKernel) mixing matrix
+RANK = 1 # rank of the constructed covariance matrix 
 ADAPT_LATENTS_TO_CLUSTER = True  # Q_c = ceil(cluster size / 2) latents per cluster
 SPECIFIC_TASK_NOISE = False
 SEED = 123
@@ -82,10 +75,11 @@ DTYPE = torch.float64
 
 ADMM_CFG = ADMMConfig(zeta=1.0, rho=10, max_iters=200, eps_abs=1e-6, eps_rel=1e-3)
 
-N_WORKERS = 2  # runs at once; total cores = N_WORKERS x N_THREADS (2 x 6 = 12)
+N_WORKERS = 2 # for parallel sweeping 
 
 DATA_DIR = os.path.join(ROOT, "data_generation")
-OUTPUT_DIR = os.path.join(ROOT, "results", FUNCTION, METHOD)
+
+OUTPUT_DIR = os.path.join(ROOT, "results", "unconstrained_noise", FUNCTION, METHOD)
 
 
 def run_cluster_mtgp_once(dataset, iota, alpha):

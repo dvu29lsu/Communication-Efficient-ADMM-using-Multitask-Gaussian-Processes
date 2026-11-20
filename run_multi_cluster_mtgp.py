@@ -145,7 +145,8 @@ def run_mtgp_clustered(
 
 def main():
     # example dataset from data_generation/ (cluster-wise MTGP needs more than one cluster)
-    data_path = "data_generation/overlapping_2_clusters.json"
+    data_path = "data_generation/20 Agents/separated_3_clusters.json"
+    # data_path = "data_generation/overlapping_2_clusters.json"
     # data_path = "data_generation/separated_2_clusters.json"
     # data_path = "data_generation/homogeneous.json"
 
@@ -157,10 +158,10 @@ def main():
     os.makedirs(output_dir, exist_ok=True)
     jsonl_output_path = os.path.join(output_dir, f"test_cluster_mtgp_{dataset_name}.jsonl")
 
-    mtgp_iota = 0.5
-    mtgp_alpha = 0.8
-    mtgp_train_iter = 300 # first fit iters
-    mtgp_refit_iter = 100 # refit
+    mtgp_iota = 1.1
+    mtgp_alpha = 0.90
+    mtgp_train_iter = 250 # first fit iters
+    mtgp_refit_iter = 50 # refit
     mtgp_lr = 0.03
     mtgp_Q = 3
     mtgp_rank = 1

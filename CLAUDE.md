@@ -7,6 +7,7 @@
 - **One step at a time:** implement one function or one file per step. Then stop, show the change, and wait for review before moving on. Don't edit several files in one go.
 - **Code quality:**
   - Write clear, clean, well-commented code; comments explain *why*, not just *what*.
+  - Fact: every line of code requires human review, so write readable code not just working code.
   - Each function does one thing.
   - Don't over-engineer: no extra abstraction layers, config systems or compatibility shims unless asked.
   - Follow the existing style of this repo: plain functions and classes, numpy/torch idioms, and the current naming conventions.

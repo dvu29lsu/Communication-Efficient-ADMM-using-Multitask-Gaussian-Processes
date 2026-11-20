@@ -1,0 +1,315 @@
+Building QuadraticLocalModel
+Building QuadraticLocalModel
+Building QuadraticLocalModel
+Building QuadraticLocalModel
+Building QuadraticLocalModel
+Building QuadraticLocalModel
+Building QuadraticLocalModel
+Building QuadraticLocalModel
+Building QuadraticLocalModel
+Building QuadraticLocalModel
+constructing Moreau oracles with local_model = quadratic
+Building QuadraticLocalModel
+Building QuadraticLocalModel
+Building QuadraticLocalModel
+Building QuadraticLocalModel
+Building QuadraticLocalModel
+Building QuadraticLocalModel
+Building QuadraticLocalModel
+Building QuadraticLocalModel
+Building QuadraticLocalModel
+Building QuadraticLocalModel
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Iter 1: r=4.681e-01 (<= 5.62e-04) | s=2.132e+00 (<= 4.69e-03) | obj=4.398099e+00 | q=10
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Iter 2: r=1.305e-01 (<= 4.13e-04) | s=1.798e+00 (<= 5.71e-03) | obj=6.239245e+00 | q=10
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Iter 3: r=4.372e-02 (<= 5.14e-04) | s=1.249e+00 (<= 6.05e-03) | obj=6.510605e+00 | q=10
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Iter 4: r=1.112e-02 (<= 5.96e-04) | s=9.101e-01 (<= 6.09e-03) | obj=6.601215e+00 | q=10
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Iter 5: r=5.575e-03 (<= 6.58e-04) | s=6.647e-01 (<= 6.11e-03) | obj=6.565298e+00 | q=10
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Iter 6: r=3.568e-03 (<= 7.03e-04) | s=4.944e-01 (<= 6.12e-03) | obj=6.542086e+00 | q=10
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Iter 7: r=2.572e-03 (<= 7.37e-04) | s=3.736e-01 (<= 6.13e-03) | obj=6.527856e+00 | q=10
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Iter 8: r=1.965e-03 (<= 7.63e-04) | s=2.862e-01 (<= 6.13e-03) | obj=6.519332e+00 | q=10
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Iter 9: r=1.549e-03 (<= 7.82e-04) | s=2.217e-01 (<= 6.14e-03) | obj=6.514286e+00 | q=10
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Iter 10: r=1.241e-03 (<= 7.97e-04) | s=1.734e-01 (<= 6.14e-03) | obj=6.511328e+00 | q=10
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Iter 11: r=1.002e-03 (<= 8.08e-04) | s=1.367e-01 (<= 6.14e-03) | obj=6.509616e+00 | q=10
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Iter 12: r=8.107e-04 (<= 8.17e-04) | s=1.084e-01 (<= 6.15e-03) | obj=6.508646e+00 | q=10
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Iter 13: r=6.560e-04 (<= 8.24e-04) | s=8.642e-02 (<= 6.15e-03) | obj=6.508116e+00 | q=10
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Iter 14: r=5.303e-04 (<= 8.29e-04) | s=6.922e-02 (<= 6.15e-03) | obj=6.507845e+00 | q=10
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Iter 15: r=4.281e-04 (<= 8.33e-04) | s=5.564e-02 (<= 6.15e-03) | obj=6.507725e+00 | q=10
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Iter 16: r=3.452e-04 (<= 8.37e-04) | s=4.488e-02 (<= 6.16e-03) | obj=6.507690e+00 | q=10
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Iter 17: r=2.779e-04 (<= 8.39e-04) | s=3.629e-02 (<= 6.16e-03) | obj=6.507700e+00 | q=10
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Iter 18: r=2.235e-04 (<= 8.41e-04) | s=2.942e-02 (<= 6.16e-03) | obj=6.507734e+00 | q=10
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Iter 19: r=1.796e-04 (<= 8.43e-04) | s=2.390e-02 (<= 6.16e-03) | obj=6.507777e+00 | q=10
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Iter 20: r=1.441e-04 (<= 8.44e-04) | s=1.945e-02 (<= 6.16e-03) | obj=6.507822e+00 | q=10
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Iter 21: r=1.156e-04 (<= 8.45e-04) | s=1.585e-02 (<= 6.16e-03) | obj=6.507865e+00 | q=10
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Iter 22: r=9.264e-05 (<= 8.46e-04) | s=1.294e-02 (<= 6.16e-03) | obj=6.507904e+00 | q=10
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Iter 23: r=7.421e-05 (<= 8.47e-04) | s=1.058e-02 (<= 6.16e-03) | obj=6.507938e+00 | q=10
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Iter 24: r=5.942e-05 (<= 8.48e-04) | s=8.660e-03 (<= 6.16e-03) | obj=6.507967e+00 | q=10
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Iter 25: r=4.756e-05 (<= 8.48e-04) | s=7.096e-03 (<= 6.16e-03) | obj=6.507991e+00 | q=10
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Using exact solver for quadratic local model
+Iter 26: r=3.806e-05 (<= 8.48e-04) | s=5.821e-03 (<= 6.16e-03) | obj=6.508012e+00 | q=10
+
+=== VANILLA-ADMM ===
+Set: homogeneous.json
+Running time: 0.009074687957763672
+Comm per iter: mean=10.000, min=10, max=10
+Total comm (agent queries): 260
+Final objective: 6.508011771455749
+Finish: homogeneous.json

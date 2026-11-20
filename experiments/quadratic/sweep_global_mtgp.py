@@ -16,7 +16,7 @@ sys.path.insert(0, ROOT)
 
 # 8 threads for one run at a time: an MTGP run is heavy, so each run gets 8 cores.
 # Must be set before numpy/torch are imported (BLAS reads them once at load).
-N_THREADS = 8
+N_THREADS = 10
 os.environ["OMP_NUM_THREADS"] = str(N_THREADS)
 os.environ["MKL_NUM_THREADS"] = str(N_THREADS)
 os.environ["OPENBLAS_NUM_THREADS"] = str(N_THREADS)
@@ -84,7 +84,8 @@ ADMM_CFG = ADMMConfig(zeta=1.0, rho=10, max_iters=200, eps_abs=1e-6, eps_rel=1e-
 N_WORKERS = 2
 
 DATA_DIR = os.path.join(ROOT, "data_generation")
-OUTPUT_DIR = os.path.join(ROOT, "results", FUNCTION, METHOD)
+# OUTPUT_DIR = os.path.join(ROOT, "results", FUNCTION, METHOD)
+OUTPUT_DIR = os.path.join(ROOT, "results", "unconstrained_noise", FUNCTION, METHOD)
 
 
 def run_global_mtgp_once(dataset, iota, alpha):

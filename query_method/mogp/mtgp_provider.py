@@ -225,7 +225,11 @@ class MTGPMoreauGradProvider:
                 # likelihood = gpytorch.likelihoods.GaussianLikelihood(noise_constraint=gpytorch.constraints.GreaterThan(1e-3),
                 #                                                      noise_prior=gpytorch.priors.SmoothedBoxPrior(0.15, 1.5, sigma=0.001)).to(self.device)
 
-                likelihood = gpytorch.likelihoods.GaussianLikelihood(noise_constraint=gpytorch.constraints.GreaterThan(1e-3)).to(self.device, self.dtype)
+                # likelihood = gpytorch.likelihoods.GaussianLikelihood(noise_constraint=gpytorch.constraints.GreaterThan(1e-3)).to(self.device, self.dtype)
+
+                # likelihood = gpytorch.likelihoods.GaussianLikelihood(noise_constraint=gpytorch.constraints.GreaterThan(1e-4)).to(self.device, self.dtype)
+                likelihood = gpytorch.likelihoods.GaussianLikelihood().to(self.device, self.dtype)
+
 
             # ===== Experiment Feb 4, 26 =====
             

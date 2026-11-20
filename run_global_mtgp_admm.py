@@ -108,21 +108,31 @@ def main():
     # data_path = "data_generation/heterogeneous.json"
     # data_path = "data_generation/separated_2_clusters.json"
     # data_path = "data_generation/separated_3_clusters.json"
-    data_path = "data_generation/overlapping_2_clusters.json"
+    # data_path = "data_generation/overlapping_2_clusters.json"
     # data_path = "data_generation/overlapping_3_clusters.json"
+
+    # test run for 20 agents cases
+    data_path = "data_generation/20 Agents/overlapping_2_clusters.json"
+
     dataset_name = os.path.splitext(os.path.basename(data_path))[0]
 
     # test outputs go to test/ so they never overwrite saved results
     output_dir = "test"
     os.makedirs(output_dir, exist_ok=True)
-    jsonl_output_path = os.path.join(output_dir, f"fast_pred_quad_sep_2_test_global_mtgp_{dataset_name}.jsonl")
+    jsonl_output_path = os.path.join(output_dir, f"global_mtgp_test_20_agents_run_{dataset_name}.jsonl")
 
-    mtgp_iota = 1.0
-    mtgp_alpha = 0.96
+    mtgp_iota = 1.3
+    mtgp_alpha = 0.98
     mtgp_train_iter = 300 # Adam steps for the first fit
     mtgp_refit_iter = 100 # Adam steps for each later refit
     mtgp_lr = 0.03
-    mtgp_Q = 5
+
+    # try with 5 equations first
+    mtgp_Q = 10
+
+    #try with Q = 10
+    # mtgp_Q = 10
+
     mtgp_rank = 1
     burn_in = 5
     specific_task_noise = False

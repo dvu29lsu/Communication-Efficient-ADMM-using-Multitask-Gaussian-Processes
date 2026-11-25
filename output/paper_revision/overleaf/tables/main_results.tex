@@ -1,0 +1,22 @@
+\begin{table*}[t]
+\centering
+\caption{Selected runs for the six quadratic instances. $T$: ADMM iterations; $C$: total exact agent queries; $e_F$: relative discrepancy in the original objective at the terminal primal variables. The exact-update query count is $C_0=10T_0$. All displayed GP runs satisfy the residual tests, $T\leq2T_0$, and $e_F\leq0.01\%$. Dashes indicate that cluster-wise MTGP was not evaluated for $K=1$.}
+\label{tab:main_results}
+\footnotesize
+\setlength{\tabcolsep}{5.1pt}
+\renewcommand{\arraystretch}{1.12}
+\begin{tabular}{l r rrr rrr rrr}
+\toprule
+& ADMM & \multicolumn{3}{c}{SOGP} & \multicolumn{3}{c}{Global MTGP} & \multicolumn{3}{c}{Cluster-wise MTGP}\\
+\cmidrule(lr){2-2}\cmidrule(lr){3-5}\cmidrule(lr){6-8}\cmidrule(lr){9-11}
+Instance & $T_0$ & $T$ & $C$ & $e_F$ (\%) & $T$ & $C$ & $e_F$ (\%) & $T$ & $C$ & $e_F$ (\%)\\
+\midrule
+Homogeneous & 26 & 52 & 186 & 0.00036 & 31 & 59 & 0.00760 & -- & -- & -- \\
+Heterogeneous & 39 & 75 & 152 & 0.00624 & 50 & 75 & 0.00648 & -- & -- & -- \\
+Separated, $K=2$ & 35 & 68 & 215 & 0.00123 & 36 & 74 & 0.00890 & 37 & 70 & 0.00769 \\
+Separated, $K=3$ & 32 & 64 & 193 & 0.00231 & 39 & 71 & 0.00990 & 40 & 75 & 0.00792 \\
+Overlapping, $K=2$ & 32 & 62 & 210 & 0.00122 & 38 & 76 & 0.00866 & 42 & 70 & 0.00979 \\
+Overlapping, $K=3$ & 30 & 59 & 183 & 0.00536 & 32 & 70 & 0.00676 & 31 & 69 & 0.00518 \\
+\bottomrule
+\end{tabular}
+\end{table*}

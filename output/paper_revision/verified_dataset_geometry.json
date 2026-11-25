@@ -1,0 +1,118 @@
+[
+  {
+    "dataset": "heterogeneous",
+    "N": 10,
+    "K": 1,
+    "sizes": [
+      10
+    ],
+    "mean_distance": 1.4576796407524641,
+    "min_eigenvalue": 1.0000000000999985
+  },
+  {
+    "dataset": "homogeneous",
+    "N": 10,
+    "K": 1,
+    "sizes": [
+      10
+    ],
+    "mean_distance": 0.16806552169337036,
+    "min_eigenvalue": 1.000000000099999
+  },
+  {
+    "dataset": "overlapping_2_clusters",
+    "N": 10,
+    "K": 2,
+    "sizes": [
+      5,
+      5
+    ],
+    "mean_distance": 0.6545014469542656,
+    "min_eigenvalue": 1.0000000000999987,
+    "silhouette": 0.470844444362735,
+    "DB": 1.0180769515402734,
+    "overlap_pairs": {
+      "1-2": 1.311089453586739
+    },
+    "overlap_max": 1.311089453586739,
+    "overlap_min": 1.311089453586739,
+    "prototype_indices": [
+      2,
+      7
+    ]
+  },
+  {
+    "dataset": "overlapping_3_clusters",
+    "N": 10,
+    "K": 3,
+    "sizes": [
+      4,
+      3,
+      3
+    ],
+    "mean_distance": 0.6352191935285393,
+    "min_eigenvalue": 1.0419802660404638,
+    "silhouette": 0.39786651886893015,
+    "DB": 1.181002839349846,
+    "overlap_pairs": {
+      "1-2": 1.0172916307569968,
+      "1-3": 1.1570272375014532,
+      "2-3": 1.35957681957692
+    },
+    "overlap_max": 1.35957681957692,
+    "overlap_min": 1.0172916307569968,
+    "prototype_indices": [
+      2,
+      7,
+      6
+    ]
+  },
+  {
+    "dataset": "separated_2_clusters",
+    "N": 10,
+    "K": 2,
+    "sizes": [
+      5,
+      5
+    ],
+    "mean_distance": 0.7891329398077206,
+    "min_eigenvalue": 1.0000000000999993,
+    "silhouette": 0.8685199618177009,
+    "DB": 0.2016089223752588,
+    "overlap_pairs": {
+      "1-2": 0.2723997211377248
+    },
+    "overlap_max": 0.2723997211377248,
+    "overlap_min": 0.2723997211377248,
+    "prototype_indices": [
+      2,
+      7
+    ]
+  },
+  {
+    "dataset": "separated_3_clusters",
+    "N": 10,
+    "K": 3,
+    "sizes": [
+      4,
+      3,
+      3
+    ],
+    "mean_distance": 0.9105336169402424,
+    "min_eigenvalue": 1.0000000000999993,
+    "silhouette": 0.8377349002615511,
+    "DB": 0.247725149877937,
+    "overlap_pairs": {
+      "1-2": 0.23546065371986347,
+      "1-3": 0.2937979610540872,
+      "2-3": 0.29072529239665856
+    },
+    "overlap_max": 0.2937979610540872,
+    "overlap_min": 0.23546065371986347,
+    "prototype_indices": [
+      2,
+      7,
+      6
+    ]
+  }
+]

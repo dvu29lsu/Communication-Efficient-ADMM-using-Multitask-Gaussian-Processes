@@ -8,4 +8,5 @@ __pycache__/
 # local
 CLAUDE.md
 # test/
+tmp/
 results/

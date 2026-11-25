@@ -1,0 +1,109 @@
+\begin{thebibliography}{10}
+
+\bibitem{boyd2011distributed}
+S.~Boyd, N.~Parikh, E.~Chu, B.~Peleato, J.~Eckstein, {\em et~al.},
+  ``Distributed optimization and statistical learning via the alternating
+  direction method of multipliers,'' {\em Foundations and Trends in Machine
+  learning}, vol.~3, no.~1, pp.~1--122, 2011.
+
+\bibitem{10.1561/2400000003}
+N.~Parikh and S.~Boyd, ``Proximal algorithms,'' {\em Found. Trends Optim.},
+  vol.~1, pp.~127--239, Jan. 2014.
+
+\bibitem{er2024distributed}
+G.~D. Er, S.~Trimpe, and M.~Muehlebach, ``Distributed event-based learning via
+  admm,'' {\em arXiv preprint arXiv:2405.10618}, 2024.
+
+\bibitem{10443910}
+P.~Chen, Z.~Chen, P.~Miao, and Y.~Chen, ``Ris-admm: A ris and admm-based
+  passive and sparse sensing method with interference removal,'' {\em IEEE
+  Communications Letters}, vol.~28, no.~4, pp.~867--871, 2024.
+
+\bibitem{11143820}
+P.~Li, C.~Chen, S.~Zhu, and X.~Guan, ``Distributed optimization for estimation
+  and communication co-design under bandwidth constraints,'' {\em IEEE
+  Transactions on Signal and Information Processing over Networks}, vol.~11,
+  pp.~1112--1126, 2025.
+
+\bibitem{he_admm_2025}
+A.~He, H.~Pan, Y.~Dai, X.~Si, C.~Yuen, and Y.~Zhang, ``{ADMM} for {Mobile}
+  {Edge} {Intelligence}: {A} {Survey},'' {\em IEEE Communications Surveys \&
+  Tutorials}, vol.~27, pp.~3020--3057, Oct. 2025.
+
+\bibitem{JMLR:v18:16-512}
+V.~Smith, S.~Forte, C.~Ma, M.~Tak{{\'a}}{\v{c}}, M.~I. Jordan, and M.~Jaggi,
+  ``{CoCoA}: A general framework for communication-efficient distributed
+  optimization,'' {\em Journal of Machine Learning Research}, vol.~18, no.~230,
+  pp.~1--49, 2018.
+
+\bibitem{pmlr-v108-li20f}
+B.~Li, S.~Cen, Y.~Chen, and Y.~Chi, ``Communication-efficient distributed
+  optimization in networks with gradient tracking and variance reduction,'' in
+  {\em Proceedings of the Twenty Third International Conference on Artificial
+  Intelligence and Statistics} (S.~Chiappa and R.~Calandra, eds.), vol.~108 of
+  {\em Proceedings of Machine Learning Research}, pp.~1662--1672, PMLR, 26--28
+  Aug 2020.
+
+\bibitem{duarte2024communication}
+A.~Duarte, T.~X. Nghiem, and S.~Wei, ``Communication-efficient admm using
+  quantization-aware gaussian process regression,'' {\em EURO Journal on
+  Computational Optimization}, vol.~12, p.~100098, 2024.
+
+\bibitem{8673589}
+Y.~Liu, W.~Xu, G.~Wu, Z.~Tian, and Q.~Ling, ``Communication-censored admm for
+  decentralized consensus optimization,'' {\em IEEE Transactions on Signal
+  Processing}, vol.~67, no.~10, pp.~2565--2579, 2019.
+
+\bibitem{stathopoulos2018communicationreductiondistributedoptimization}
+G.~Stathopoulos and C.~N. Jones, ``Communication reduction in distributed
+  optimization via estimation of the proximal operator,'' 2018.
+
+\bibitem{8635898}
+T.~X. Nghiem, G.~Stathopoulos, and C.~N. Jones, ``Learning proximal operators
+  with gaussian processes,'' in {\em 2018 56th Annual Allerton Conference on
+  Communication, Control, and Computing (Allerton)}, pp.~935--942, 2018.
+
+\bibitem{duarte2024optimal}
+A.~Duarte, T.~X. Nghiem, and S.~Wei, ``Optimal querying for
+  communication-efficient admm using gaussian process regression,'' {\em
+  Franklin Open}, vol.~6, p.~100080, 2024.
+
+\bibitem{duarte2026communication}
+A.~Duarte, B.~Nguyen, T.~X. Nghiem, and S.~Wei, ``Communication-efficient admm
+  using gaussian process regression and fully adaptive uniform quantization,''
+  {\em Franklin Open}, p.~100587, 2026.
+
+\bibitem{rockafellar1998variational}
+R.~T. Rockafellar and R.~J. Wets, {\em Variational analysis}.
+\newblock Springer.
+
+\bibitem{duvenaud_2014}
+D.~Duvenaud, {\em Automatic model construction with Gaussian processes}.
+\newblock PhD thesis, Apollo - University of Cambridge Repository, 2014.
+
+\bibitem{williams2006gaussian}
+C.~K. Williams and C.~E. Rasmussen, {\em Gaussian processes for machine
+  learning}, vol.~2.
+\newblock MIT press Cambridge, MA, 2006.
+
+\bibitem{bone2025gradient}
+V.~Bone, C.~van~der Heide, K.~Mackle, I.~Jahn, P.~M. Dower, and C.~Manzie,
+  ``Gradient-enhanced deep gaussian processes for multifidelity modeling,''
+  {\em Journal of Computational Physics}, vol.~520, p.~113474, 2025.
+
+\bibitem{alvarez2012kernelsvectorvaluedfunctionsreview}
+M.~A. Alvarez, L.~Rosasco, and N.~D. Lawrence, ``Kernels for vector-valued
+  functions: a review,'' 2012.
+
+\bibitem{pennec2006riemannian}
+X.~Pennec, P.~Fillard, and N.~Ayache, ``A riemannian framework for tensor
+  computing,'' {\em International Journal of Computer Vision}, vol.~66, no.~1,
+  pp.~41--66, 2006.
+
+\bibitem{gardner2018gpytorch}
+J.~R. Gardner, G.~Pleiss, D.~Bindel, K.~Q. Weinberger, and A.~G. Wilson,
+  ``Gpytorch: Blackbox matrix-matrix gaussian process inference with gpu
+  acceleration,'' in {\em Advances in Neural Information Processing Systems},
+  2018.
+
+\end{thebibliography}

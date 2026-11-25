@@ -1,0 +1,22 @@
+\begin{table*}[t]
+\centering
+\caption{Supplied settings reproduced from the experiment records. Here $e_J$ is the discrepancy in the logged split objective, not the original primal objective.}
+\label{tab:supplied_results}
+\footnotesize
+\setlength{\tabcolsep}{5.1pt}
+\renewcommand{\arraystretch}{1.12}
+\begin{tabular}{l r rrr rrr rrr}
+\toprule
+& ADMM & \multicolumn{3}{c}{SOGP} & \multicolumn{3}{c}{Global MTGP} & \multicolumn{3}{c}{Cluster-wise MTGP}\\
+\cmidrule(lr){2-2}\cmidrule(lr){3-5}\cmidrule(lr){6-8}\cmidrule(lr){9-11}
+Instance & $T_0$ & $T$ & $C$ & $e_J$ (\%) & $T$ & $C$ & $e_J$ (\%) & $T$ & $C$ & $e_J$ (\%)\\
+\midrule
+Homogeneous & 26 & 52 & 186 & 0.00041 & 30 & 59 & 0.00719 & -- & -- & -- \\
+Heterogeneous & 39 & 75 & 152 & 0.00521 & 52 & 75 & 0.00588 & -- & -- & -- \\
+Separated, $K=2$ & 35 & 68 & 215 & 0.00028 & 35 & 73 & 0.00906 & 43 & 70 & 0.00762 \\
+Separated, $K=3$ & 32 & 64 & 193 & 0.00950 & 34 & 74 & 0.00511 & 36 & 76 & 0.00968 \\
+Overlapping, $K=2$ & 32 & 62 & 210 & 0.00047 & 40 & 75 & 0.00628 & 44 & 70 & 0.00956 \\
+Overlapping, $K=3$ & 30 & 55 & 183 & 0.00512 & 38 & 70 & 0.00674 & 43 & 69 & 0.00465 \\
+\bottomrule
+\end{tabular}
+\end{table*}

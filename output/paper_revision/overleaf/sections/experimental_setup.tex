@@ -1,0 +1,43 @@
+\section{Experimental Setup}
+\label{sec:data_generate}
+\label{sec:experimental_setup}
+
+\subsection{Problem and Datasets}
+We study the sharing problem in \eqref{distributed_shairing} with $N=10$, $p=5$, and
+\begin{equation}
+ f_i(x_i)=(x_i-\theta_i)^\top\Gamma_i(x_i-\theta_i),
+ \qquad g(v)=\zeta\|v\|_1,
+ \label{eq:quadratic_form}
+\end{equation}
+where $\Gamma_i\succ0$ and $\zeta=1$. Six fixed synthetic instances represent homogeneous and heterogeneous agents ($K=1$), and separated or overlapping groups with $K=2$ or $K=3$. Group sizes are $(5,5)$ and $(4,3,3)$, respectively. These are parameter-space groups, not communication-network topologies.
+
+We generate the instances from the ten reference parameter pairs in \cite{duarte2024communication}. For $c_i=(\theta_i,\Gamma_i)$, define
+\begin{equation}
+ d_f(c_i,c_j)=\frac{\|\theta_i-\theta_j\|_2}{2s_\theta}
+ +\frac{\|\log(\Gamma_i^{-1/2}\Gamma_j\Gamma_i^{-1/2})\|_F}{2s_\Gamma},
+ \label{eq:function_distance}
+\end{equation}
+where $s_\theta$ and $s_\Gamma$ are the mean pairwise distances in the fixed reference pool. The second term uses the affine-invariant distance on positive definite matrices \cite{pennec2006riemannian}. We select the medoid for $K=1$, the farthest pair for $K=2$, and add the candidate farthest from its nearest selected prototype for $K=3$.
+
+For each agent, perturb its prototype as $\theta_i=\bar\theta_k+\sigma\xi_i$ and $\widetilde\Gamma_i=\bar\Gamma_k+\sigma(Z_i+Z_i^\top)/2$, with independent standard Gaussian entries, then shift $\widetilde\Gamma_i$ to enforce $\lambda_{\min}(\Gamma_i)\geq1$. The perturbation scale is $\sigma=0.1$ for homogeneous and separated instances and $\sigma=1$ for the heterogeneous instance. For separated groups, accept samples within $\Delta_{\min}/4$ of their generating prototype, where $\Delta_{\min}$ is the minimum prototype distance. For overlapping groups, first contract the prototypes halfway toward their common arithmetic mean, then use $\sigma=0.3$ and radius cap $3\Delta_{\min}/4$, recomputing $\Delta_{\min}$ after contraction. The generation seed is 20260629. Under \eqref{eq:function_distance}, the realized silhouette scores are $(0.869,0.838)$ for separated groups and $(0.471,0.398)$ for overlapping groups at $K=(2,3)$; thus the latter have weaker separation. The construction permits overlap and does not imply recovery of a unique latent clustering.
+
+\subsection{Methods and Evaluation Protocol}
+We compare exact-update ADMM, independent per-agent GPs (SOGP) following \cite{8635898}, one global MTGP, and independent MTGPs using the known group labels. Cluster-wise MTGP is evaluated only for $K\geq2$. All methods start from zero and use $\rho=10$. The exact local update and shared update are
+\begin{equation}
+\begin{aligned}
+ x_i^{k+1}&=(2\Gamma_i+\rho I_p)^{-1}(2\Gamma_i\theta_i+\rho y_i^k),\\
+ \bar z^{k+1}&=\mathcal S_{\zeta/\rho}(\bar x^{k+1}+u^k),
+\end{aligned}
+\end{equation}
+where $\mathcal S_\tau$ is elementwise soft thresholding. The GP methods replace only the local update when their query rule permits. We stop using the stacked primal and dual residual tests in \cite[Sec.~3.3]{boyd2011distributed}, with $\epsilon^{\mathrm{abs}}=10^{-6}$ and $\epsilon^{\mathrm{rel}}=10^{-3}$. GP runs are capped at 200 iterations; all exact-update baselines terminate within 39 iterations.
+
+Five exact iterations initialize each surrogate, costing 50 agent queries. Global MTGP uses $Q=5$ latent kernels; each cluster model uses $Q=\lceil|\mathcal C_k|/2\rceil$. The saved configurations use seed 123 and double precision. SOGP uses 100 Adam steps per fit at learning rate 0.01; global and cluster-wise MTGP use initial/refit budgets of 300/100 and 250/50 steps, respectively, at learning rate 0.03. The implementations use PyTorch and GPyTorch \cite{gardner2018gpytorch}. These comparisons evaluate the configured methods; they do not isolate task sharing from all model and training choices.
+
+Let $T$ be the number of ADMM iterations and $q_i^k=1$ when agent $i$ is queried at iteration $k$, and zero otherwise. Define
+\begin{equation}
+ C=\sum_{k=1}^{T}\sum_{i=1}^{N}q_i^k,
+ \qquad S=100(1-C/C_0),
+\end{equation}
+where $C_0=NT_0$ is the exact-update baseline cost. Counts include initialization. A query is one agent--coordinator exchange; simultaneous queries count separately. Thus $C$ measures exact-query exchanges, not communication rounds, transmitted bits, or runtime. Diagnostic oracle evaluations used only to measure prediction error are excluded from this simulated communication count.
+
+We evaluate the original objective $F(x)=\sum_i f_i(x_i)+\zeta\|\sum_i x_i\|_1$ at the terminal primal variables and report $e_F=100|F(x)-F(x_0)|/|F(x_0)|$, where $x_0$ is the terminal exact-update ADMM solution. This is a baseline discrepancy, not a certified optimality gap. For each method and instance, search $\iota\in\{0.5,0.6,\ldots,1.5\}$ and $\alpha\in\{0.80,0.81,\ldots,0.99\}$. Among runs that satisfy the residual tests, $T\leq2T_0$, $e_F\leq0.01\%$, and $C<C_0$, select the smallest $C$; break ties by $e_F$, $T$, $\iota$, then $\alpha$. These are instance-specific selections from 220 settings, not performance under a single transferable tuning rule.

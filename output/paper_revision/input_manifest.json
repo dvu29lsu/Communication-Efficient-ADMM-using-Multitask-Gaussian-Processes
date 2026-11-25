@@ -1,0 +1,58 @@
+[
+  {
+    "path": "/home/delta/Documents/CISS2027/CISS2027_current_version.pdf",
+    "sha256": "9563fa89214c536a1bc20a994308700dc8234ff301867bc36cb1b9ae2be2f06a"
+  },
+  {
+    "path": "/home/delta/Documents/CISS2027/Results for analysis - Sheet2.pdf",
+    "sha256": "9527fd39d7dd033c761f1659a235f5f58363fe41b6660e39f3d762e0c9259aaf"
+  },
+  {
+    "path": "/home/delta/Documents/CISS2027/CISS2027.zip",
+    "sha256": "26db1501c86ba4e9b11140be566c71d295e4509f4d7c12086cc79773fb54f582"
+  },
+  {
+    "path": "/home/delta/Documents/Comm_Efficient_MTGP_ADMM/Communication-Efficient-ADMM-using-Multitask-Gaussian-Processes/results/quadratic/vanilla/summary.csv",
+    "sha256": "00896b09279ed32ebb9212c9f9892c9136a36e742331bed7100436272b448c4a"
+  },
+  {
+    "path": "/home/delta/Documents/Comm_Efficient_MTGP_ADMM/Communication-Efficient-ADMM-using-Multitask-Gaussian-Processes/results/quadratic/sogp/summary.csv",
+    "sha256": "d186ec2d78b19e98bb1c593faaddf50de4b7df7625f057a2828fe2a661c2ac77"
+  },
+  {
+    "path": "/home/delta/Documents/Comm_Efficient_MTGP_ADMM/Communication-Efficient-ADMM-using-Multitask-Gaussian-Processes/results/unconstrained_noise/quadratic/global_mtgp/summary.csv",
+    "sha256": "8f8e653c8575948cbc543f9e81968472bdec9ceb8b8b163a55525ad3809fe818"
+  },
+  {
+    "path": "/home/delta/Documents/Comm_Efficient_MTGP_ADMM/Communication-Efficient-ADMM-using-Multitask-Gaussian-Processes/results/unconstrained_noise/quadratic/cluster_mtgp/summary.csv",
+    "sha256": "033b78fb7de208cd400c2e09e8e3fbd45d5e4ab02635726d1d2e427149e0ad2a"
+  },
+  {
+    "path": "/home/delta/Documents/Comm_Efficient_MTGP_ADMM/Communication-Efficient-ADMM-using-Multitask-Gaussian-Processes/data_generation/overlapping_2_clusters.json",
+    "sha256": "a80aa5cd4e52f82b95d820c9082fd92fcf9cdda0b49b1b131422b8ac4135818b"
+  },
+  {
+    "path": "/home/delta/Documents/Comm_Efficient_MTGP_ADMM/Communication-Efficient-ADMM-using-Multitask-Gaussian-Processes/data_generation/separated_3_clusters.json",
+    "sha256": "2e817c70169f6543548ab1890a2e767c162bd0d38482c3f96278840677a0be08"
+  },
+  {
+    "path": "/home/delta/Documents/Comm_Efficient_MTGP_ADMM/Communication-Efficient-ADMM-using-Multitask-Gaussian-Processes/data_generation/heterogeneous.json",
+    "sha256": "d38c6f4fc74bfcaf7038a66021b37ae3927eb4b8c8a0f45b86a1d44c93ff3a0f"
+  },
+  {
+    "path": "/home/delta/Documents/Comm_Efficient_MTGP_ADMM/Communication-Efficient-ADMM-using-Multitask-Gaussian-Processes/data_generation/directional_quartic_dim5.json",
+    "sha256": "316acf5caaf2cbd188b80edd6b696f626963dbe7c09352483c3f37be82684b80"
+  },
+  {
+    "path": "/home/delta/Documents/Comm_Efficient_MTGP_ADMM/Communication-Efficient-ADMM-using-Multitask-Gaussian-Processes/data_generation/homogeneous.json",
+    "sha256": "3cbdcbd34447f01e3724d1f00801c740e78cad52a9515431573e94070390ed83"
+  },
+  {
+    "path": "/home/delta/Documents/Comm_Efficient_MTGP_ADMM/Communication-Efficient-ADMM-using-Multitask-Gaussian-Processes/data_generation/overlapping_3_clusters.json",
+    "sha256": "b61ba8d843a9da7096f18235295ebaccbcbd2b579fe6d3c11852ffa2d88e151d"
+  },
+  {
+    "path": "/home/delta/Documents/Comm_Efficient_MTGP_ADMM/Communication-Efficient-ADMM-using-Multitask-Gaussian-Processes/data_generation/separated_2_clusters.json",
+    "sha256": "68a1e2f85bbd7250d0721e457707b6bebb4b132be6f49fbabb099043156ca117"
+  }
+]
